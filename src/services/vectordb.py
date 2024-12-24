@@ -1,9 +1,8 @@
 import streamlit as st
 from dotenv import load_dotenv
+from qdrant_client import QdrantClient
 
 load_dotenv()
-
-from qdrant_client import QdrantClient
 
 QDRANT_URL = st.secrets["QDRANT"]["QDRANT_URL"]
 QDRANT_API_KEY = st.secrets["QDRANT"]["QDRANT_API_KEY"]
@@ -27,14 +26,16 @@ def text_to_embedding(text):
     return embeddings.data[0].embedding
 
 
-def fetch_recommended_events(
-    artist_profile, collection_name=QDRANT_COLLECTION_NAME, limit=5
-):
-    artist_embedding = text_to_embedding(artist_profile)
-    similar_events = qdrant_client.search(
-        collection_name=collection_name, query_vector=artist_embedding, limit=limit
+def fetch_recommended_events(query, collection_name=QDRANT_COLLECTION_NAME, limit=5):
+    query_embedding = text_to_embedding(query)
+    similar_entities = qdrant_client.search(
+        collection_name=collection_name, query_vector=query_embedding, limit=limit
     )
-    return [event.payload for event in similar_events]
+    return [entity.payload for entity in similar_entities]
 
 
-
+def fetch_all_events(collection_name=QDRANT_COLLECTION_NAME):
+    points = qdrant_client.scroll(
+        collection_name=collection_name, limit=100
+    )
+    return [point.payload for point in points[0]]
