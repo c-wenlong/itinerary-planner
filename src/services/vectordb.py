@@ -34,7 +34,7 @@ def fetch_recommended_events(
     similar_events = qdrant_client.search(
         collection_name=collection_name, query_vector=artist_embedding, limit=limit
     )
-    return [event.payload["event_name"] for event in similar_events]
+    return [event.payload for event in similar_events]
 
 
 
