@@ -2,6 +2,13 @@ import streamlit as st
 from services import fetch_recommended_events, user_to_vectordb_prompt
 from ui import create_event_card, create_history_card
 
+st.set_page_config(
+    page_title="Kai's Date Recommender",
+    page_icon="🌟",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
 
 def main():
     initialise_session_state()
@@ -30,7 +37,7 @@ def recommendation_engine():
         if prompt:
             with st.spinner("Finding recommendations..."):
                 # transform user input to a prompt that is better for the vector DB
-                improved_prompt = prompt  # user_to_vectordb_prompt(prompt)
+                improved_prompt = user_to_vectordb_prompt(prompt)
 
                 # fetch the recommendations from the vector DB
                 events = fetch_recommended_events(improved_prompt)

@@ -57,3 +57,4 @@ elif demo_section == "Event Card":
     }
     st.markdown(create_event_card(event), unsafe_allow_html=True)
     test_elements()
+  

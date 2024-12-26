@@ -49,22 +49,22 @@ def load_database_events():
 
     # Process all events
     all_data = []
-    for point in points[0]:  # Access the Record objects
+    for point in points:  # Access the Record objects
         display_data = {
-            "Event ID": point.payload.get("event_id", "N/A"),
-            "Name": point.payload.get("name", "N/A"),
-            "Category": point.payload.get("category", "N/A"),
-            "Subcategory": point.payload.get("subcategory", "N/A"),
-            "Description": point.payload.get("description", "N/A"),
-            "Location": point.payload.get("location", "N/A"),
-            "Area": point.payload.get("area", "N/A"),
-            "Price Range": point.payload.get("price_range", "N/A"),
-            "Actual Price": point.payload.get("actual_price", "N/A"),
-            "Duration (Hours)": point.payload.get("duration_hours", "N/A"),
-            "Suitable For": ", ".join(point.payload.get("suitable_for", [])),
-            "Intensity Level": point.payload.get("intensity_level", "N/A"),
-            "Tags": ", ".join(point.payload.get("tags", [])),
-            "Created At": point.payload.get("created_at", "N/A"),
+            "Event ID": point.get("event_id", "N/A"),
+            "Name": point.get("name", "N/A"),
+            "Category": point.get("category", "N/A"),
+            "Subcategory": point.get("subcategory", "N/A"),
+            "Description": point.get("description", "N/A"),
+            "Location": point.get("location", "N/A"),
+            "Area": point.get("area", "N/A"),
+            "Price Range": point.get("price_range", "N/A"),
+            "Actual Price": point.get("actual_price", "N/A"),
+            "Duration (Hours)": point.get("duration_hours", "N/A"),
+            "Suitable For": ", ".join(point.get("suitable_for", [])),
+            "Intensity Level": point.get("intensity_level", "N/A"),
+            "Tags": ", ".join(point.get("tags", [])),
+            "Created At": point.get("created_at", "N/A"),
         }
         all_data.append(display_data)
 
