@@ -3,8 +3,8 @@ import streamlit as st
 
 def show_activity_table(data_frame):
     # Show section to view and edit existing tickets in a table.
-    st.header("Existing tickets")
-    st.write(f"Number of tickets: `{len(st.session_state.df)}`")
+    st.header("Existing Activities")
+    st.write(f"Number of activities: `{len(st.session_state.df)}`")
 
     st.info(
         "You can edit the tickets by double clicking on a cell. Note how the plots below "

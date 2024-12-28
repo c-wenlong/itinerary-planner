@@ -138,13 +138,14 @@ Tags_Field = Field(
     default_factory=list, description="Tags associated with the activity"
 )
 
+
 class Activity_Inferred_Fields(BaseModel):
     physical_intensity: Physical_Intensity_Inferred_Enum
     cost_range: Cost_Range_Inferred_Enum
     social_interaction: Social_Interaction_Inferred_Enum
     weather_suitability: Weather_Suitability_Enum
     time_of_day: Time_Of_Day_Enum
-    
+
 
 class Activity(BaseModel):
     # System field

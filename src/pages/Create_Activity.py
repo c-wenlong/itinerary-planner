@@ -3,7 +3,12 @@ import streamlit as st
 from components import show_statistics, show_activity_form, show_activity_table
 
 # Show app title and description.
-st.set_page_config(page_title="Create Activity", page_icon="🎲")
+st.set_page_config(
+    page_title="Create Activity",
+    page_icon="🎲",
+    initial_sidebar_state="collapsed",
+    layout="wide",
+)
 
 st.title("🎲 Add a New Activity Here")
 st.write(
@@ -13,5 +18,4 @@ st.write(
     """
 )
 
-# Fetch activity data from the database
 show_activity_form()

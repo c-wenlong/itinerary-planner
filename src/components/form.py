@@ -23,35 +23,32 @@ test_activity = Activity(
 def show_activity_form():
     # We're adding activities via an `st.form` and some input widgets. If widgets are used
     # in a form, the app will only rerun once the submit button is pressed.
-    with st.form("add_ticket_form"):
-        name = st.text_input("Name of the activity")
-        description = st.text_area("Describe the activity!", height=80)
-        category = st.selectbox(
-            "Category", [category.value for category in Category_Enum]
-        )
-        duration = st.number_input(
-            "Duration in hours (will be rounded to nearest 0.5)",
-            min_value=0.0,
-            step=0.5,
-        )
+    with st.form("add_activity_form"):
+        required, optional = st.columns(2)
+        with required:
+            # Required Fields
+            name = st.text_input("Name of the activity")
+            description = st.text_area("Describe the activity!", height=80)
+            category = st.selectbox(
+                "Category", [category.value for category in Category_Enum]
+            )
+            duration = st.number_input(
+                "Duration in hours (will be rounded to nearest 0.5)",
+                min_value=0.0,
+                step=0.5,
+            )
 
-        # Optional Fields
-        st.markdown("### Optional Fields")
-
-        # Location
-        location = st.text_input("Location (optional)")
-
-        # Skills (using tags input)
-        skills_input = st.text_input(
-            "Skills (optional) - Separate multiple skills with commas",
-            placeholder="e.g., navigation, photography, teamwork",
-        )
-
-        # Tags
-        tags_input = st.text_input(
-            "Tags (optional) - Separate multiple tags with commas",
-            placeholder="e.g., outdoor, nature, exercise",
-        )
+        with optional:
+            # Optional Fields
+            location = st.text_input("Location (optional)")
+            skills_input = st.text_input(
+                "Skills (optional) - Separate multiple skills with commas",
+                placeholder="e.g., navigation, photography, teamwork",
+            )
+            tags_input = st.text_input(
+                "Tags (optional) - Separate multiple tags with commas",
+                placeholder="e.g., outdoor, nature, exercise",
+            )
 
         submitted = st.form_submit_button("Submit")
 
