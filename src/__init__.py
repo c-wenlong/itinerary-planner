@@ -1,1 +1,1 @@
-from .services.vectordb import *  # Only if you want to expose everything
+from .services.qdrant_service import *  # Only if you want to expose everything

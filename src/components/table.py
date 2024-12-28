@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-def show_table(data_frame):
+def show_activity_table(data_frame):
     # Show section to view and edit existing tickets in a table.
     st.header("Existing tickets")
     st.write(f"Number of tickets: `{len(st.session_state.df)}`")

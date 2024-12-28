@@ -116,11 +116,7 @@ if __name__ == "__main__":
     # Validate a ticket from JSON
     ticket_json = {
         "title": "DB Connection Timeout",
-        "description": "Database connections timing out under heavy load",
-        "type": "BUG",
-        "priority": "HIGH",
-        "components": ["Database", "Database"],  # Duplicate will be removed
-        "labels": ["performance"],
+        "description": "Database connections timing out under heavy load"
     }
 
     parsed_ticket = Ticket.model_validate(ticket_json)
