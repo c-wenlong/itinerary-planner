@@ -15,3 +15,10 @@ def user_to_vectordb_prompt(user_prompt) -> str:
         ],
     )
     return completion.choices[0].message.content
+
+
+def text_to_embedding(text):
+    embeddings = openai_client.embeddings.create(
+        model="text-embedding-3-small", input=text, encoding_format="float"
+    )
+    return embeddings.data[0].embedding

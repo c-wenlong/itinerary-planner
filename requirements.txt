@@ -4,3 +4,4 @@ streamlit
 openai
 pathlib
 streamlit-aggrid
+googlemaps
