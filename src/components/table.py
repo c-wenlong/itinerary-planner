@@ -1,4 +1,7 @@
 import streamlit as st
+from decimal import Decimal
+from typing import List
+
 from schemas import (
     Activity,
     Category_Enum,
@@ -8,9 +11,6 @@ from schemas import (
     Time_Of_Day_Enum,
     Weather_Suitability_Enum,
 )
-
-from decimal import Decimal
-from typing import List
 
 
 def generate_sample_activities() -> List[Activity]:

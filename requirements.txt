@@ -5,3 +5,5 @@ openai
 pathlib
 streamlit-aggrid
 googlemaps
+shapely
+geopy

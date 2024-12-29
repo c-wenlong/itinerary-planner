@@ -4,13 +4,13 @@ from enum import Enum
 from pydantic import BaseModel, Field, field_validator
 from uuid import uuid4, UUID
 from decimal import Decimal
+from shapely.geometry import Point
+import re
 
 
 # CLASSES
 class Category_Enum(str, Enum):
     UNCLASSIFIED = "UNCLASSIFIED"
-    OUTDOOR = "OUTDOOR"
-    INDOOR = "INDOOR"
     CULTURAL = "CULTURAL"
     SPORTS = "SPORTS"
     ENTERTAINMENT = "ENTERTAINMENT"
@@ -59,12 +59,23 @@ class Time_Of_Day_Enum(str, Enum):
     NIGHT = "NIGHT"
 
 
-# FIELDS
-ID_Field: UUID = Field(
-    default_factory=uuid4,
-    description="Unique identifier for the activity",
-)
+class Indoor_Or_Outdoor_Enum(str, Enum):
+    UNCLASSIFIED = "UNCLASSIFIED"
+    INDOOR = "INDOOR"
+    OUTDOOR = "OUTDOOR"
 
+
+class Point(BaseModel):
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+
+
+class Location_Class(BaseModel):
+    coordinates: Point = Field(description="Latitude/longitude coordinates")
+    full_address: str = Field(min_length=1, max_length=500)
+
+
+# REQUIRED FIELDS
 Name_Field = Field(
     ...,  # ... means required
     min_length=1,
@@ -104,19 +115,9 @@ Social_Interaction_Field = Field(
     description="The level of social interaction required for the activity",
 )
 
-Created_At_Field = Field(
-    default_factory=lambda: datetime.now(timezone.utc),
-    description="Timestamp when the activity was created",
-)
-
-Updated_At_Field = Field(
-    default_factory=lambda: datetime.now(timezone.utc),
-    description="Timestamp when the activity was last updated",
-)
-
-# OPTIONAL FIELDS
-Location_Field = Field(
-    default=None, min_length=1, description="Location where the activity takes place"
+Indoor_Or_Outdoor_Field = Field(
+    default=Indoor_Or_Outdoor_Enum.UNCLASSIFIED,
+    description="Whether the activity is indoor or outdoor",
 )
 
 Time_Of_Day_Field = Field(
@@ -129,13 +130,36 @@ Weather_Suitability_Field = Field(
     description="Weather conditions suitable for the activity",
 )
 
+
+# OPTIONAL FIELDS
+Location_Field = Field(default=None, description="Location where the activity is held")
+
+Date_Field = Field(default=None, description="Date when the activity is scheduled")
+
+Url_Field = Field(default=None, description="URL to the activity's website")
+
 Skills_List_Field = Field(
     default_factory=list, description="Skills needed or learnt through this activity"
 )
 
-
 Tags_Field = Field(
     default_factory=list, description="Tags associated with the activity"
+)
+
+# SYSTEM FIELDS
+ID_Field: UUID = Field(
+    default_factory=uuid4,
+    description="Unique identifier for the activity",
+)
+
+Created_At_Field = Field(
+    default_factory=lambda: datetime.now(timezone.utc),
+    description="Timestamp when the activity was created",
+)
+
+Updated_At_Field = Field(
+    default_factory=lambda: datetime.now(timezone.utc),
+    description="Timestamp when the activity was last updated",
 )
 
 
@@ -145,6 +169,7 @@ class Activity_Inferred_Fields(BaseModel):
     social_interaction: Social_Interaction_Inferred_Enum
     weather_suitability: Weather_Suitability_Enum
     time_of_day: Time_Of_Day_Enum
+    indoor_or_outdoor: Indoor_Or_Outdoor_Enum
 
 
 class Activity(BaseModel):
@@ -158,7 +183,9 @@ class Activity(BaseModel):
     description: str = Description_Field
 
     # Optional fields
-    location: Optional[str] = Location_Field
+    location: Optional[Location_Class] = Location_Field
+    date: Optional[datetime] = Date_Field
+    url: Optional[str] = Url_Field
     skills: Optional[List[str]] = Skills_List_Field
     tags: Optional[List[str]] = Tags_Field
 
@@ -166,6 +193,7 @@ class Activity(BaseModel):
     physical_intensity: Physical_Intensity_Inferred_Enum = Physical_Intensity_Field
     cost_range: Cost_Range_Inferred_Enum = Cost_Range_Field
     social_interaction: Social_Interaction_Inferred_Enum = Social_Interaction_Field
+    indoor_or_outdoor: Indoor_Or_Outdoor_Enum = Indoor_Or_Outdoor_Field
 
     # Inferred fields from category
     time_of_day: Time_Of_Day_Enum = Time_Of_Day_Field
@@ -214,6 +242,21 @@ class Activity(BaseModel):
         # Convert back to Decimal
         return Decimal(str(rounded))
 
+    @field_validator("date")
+    def validate_date(cls, date) -> datetime:
+        if date is not None:
+            if date < datetime.now(timezone.utc):
+                raise ValueError("Date cannot be in the past")
+        return date
+
+    @field_validator("url")
+    def validate_url(cls, url: str) -> str:
+        if url is not None:
+            pattern = r"^https?:\/\/([\w\d-]+\.)*[\w\d-]+\.[a-z]+(\/.*)?\/?$"
+            if not re.match(pattern, url):
+                raise ValueError("Invalid URL format")
+        return url
+
     def update(self, **kwargs):
         """Update the activity and automatically update the updated_at timestamp"""
         for key, value in kwargs.items():
@@ -228,13 +271,14 @@ class Activity(BaseModel):
             "example": {
                 "id": "ACTIVITY-12345678",
                 "name": "Hiking",
-                "category": Category_Enum.OUTDOOR,
+                "category": Category_Enum.CULTURAL,
                 "duration": 2.5,
                 "description": "Hiking is a great way to explore the outdoors and get some exercise.",
                 "location": "MacRitchie Reservoir",
                 "physical_intensity": Physical_Intensity_Inferred_Enum.MODERATE,
                 "cost_range": Cost_Range_Inferred_Enum.LOW,
                 "skills": ["Endurance", "Navigation"],
+                "indoor_or_outdoor": Indoor_Or_Outdoor_Enum.OUTDOOR,
                 "social_interaction": Social_Interaction_Inferred_Enum.INDIVIDUAL,
                 "weather_suitability": Weather_Suitability_Enum.DRY_WEATHER,
                 "time_of_day": Time_Of_Day_Enum.MORNING,

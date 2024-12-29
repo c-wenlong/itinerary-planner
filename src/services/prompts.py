@@ -111,6 +111,10 @@ Your task is to analyze the activity description and return a structured JSON ob
    - EVENING: Best after 4pm
    - NIGHT: Best after dark
 
+6. indooe_outdoor: Must be one of ["INDOOR", "OUTDOOR"]
+    - INDOOR: Activities that take place inside
+    - OUTDOOR: Activities that take place outside
+
 Context considerations:
 - Activities are based in Singapore
 - Consider the tropical climate (hot and humid)
@@ -136,6 +140,7 @@ Example Output:
     "social_interaction": "GROUP",
     "weather_suitability": "SHELTERED",
     "time_of_day": "MORNING"
+    "indoor_outdoor": "INDOOR"
 }
 
 Always return a valid JSON object with all five fields. Do not include any explanations or additional text in your response, only the JSON object.

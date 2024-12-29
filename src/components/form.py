@@ -1,8 +1,10 @@
 import streamlit as st
 from pydantic import ValidationError
+from datetime import datetime, timezone
 
-from schemas import Activity, Category_Enum, Duration_in_Hours_Field, Description_Field
-from services import text_to_structured_output
+from schemas import Activity, Activity_Inferred_Fields, Category_Enum
+from services import text_to_structured_output, upload_activity
+from .google_maps_search import show_google_maps_search
 
 """
 test_activity = Activity(
@@ -41,6 +43,8 @@ def show_activity_form():
         with optional:
             # Optional Fields
             location = st.text_input("Location (optional)")
+            date = st.date_input("Date (optional)", value=None)
+            url = st.text_input("URL (optional)")
             skills_input = st.text_input(
                 "Skills (optional) - Separate multiple skills with commas",
                 placeholder="e.g., navigation, photography, teamwork",
@@ -73,12 +77,21 @@ def show_activity_form():
                 duration=duration,
                 description=description,
                 location=location if location else None,
-                skills=skills,
-                tags=tags,
+                date=(
+                    datetime.combine(date, datetime.min.time()).replace(
+                        tzinfo=timezone.utc
+                    )
+                    if date
+                    else None
+                ),
+                url=url if url else None,
+                skills=skills if skills else [],
+                tags=tags if tags else [],
             )
 
             # Here you would typically save the activity
             st.success("Activity added successfully!")
+
             # Display both activity and inferred fields as formatted JSON
             col1, col2 = st.columns(2)
 
@@ -91,10 +104,34 @@ def show_activity_form():
                 inferred_fields = text_to_structured_output(activity.model_dump_json())
                 st.json(inferred_fields)
 
+            st.subheader("Merged Activity")
+            full_activity = merge_inferred_fields(activity, inferred_fields)
+            st.json(full_activity.model_dump())
+
+            # upload_activity(activity)
+
         except ValidationError as e:
             st.error(f"Validation error: {str(e)}")
 
-        # Activity.model_validate(activity).model_dump_json(indent=2)
+
+def merge_inferred_fields(
+    activity: Activity, inferred_fields: Activity_Inferred_Fields
+):
+    physical = inferred_fields.physical_intensity
+    cost = inferred_fields.cost_range
+    social = inferred_fields.social_interaction
+    weather = inferred_fields.weather_suitability
+    time = inferred_fields.time_of_day
+    indoor_or_outdoor = inferred_fields.indoor_or_outdoor
+
+    activity.physical_intensity = physical
+    activity.cost_range = cost
+    activity.social_interaction = social
+    activity.weather_suitability = weather
+    activity.time_of_day = time
+    activity.indoor_or_outdoor = indoor_or_outdoor
+
+    return activity
 
 
 if __name__ == "__main__":
