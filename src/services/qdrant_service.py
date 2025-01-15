@@ -3,7 +3,7 @@ from qdrant_client import QdrantClient, models
 from uuid import UUID
 
 from .openai_service import text_to_embedding
-from schemas import Activity
+from entities import Activity
 
 QDRANT_URL = st.secrets["QDRANT"]["QDRANT_URL"]
 QDRANT_API_KEY = st.secrets["QDRANT"]["QDRANT_API_KEY"]

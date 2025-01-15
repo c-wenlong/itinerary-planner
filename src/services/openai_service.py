@@ -3,7 +3,7 @@ import streamlit as st
 import logging
 
 from .prompts import RECOMMENDER_SYSTEM, STRUTURED_OUTPUT_SYSTEM
-from schemas import Activity_Inferred_Fields
+from entities import Activity_Inferred_Fields
 
 OPENAI_API_KEY = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 openai_client = OpenAI(api_key=OPENAI_API_KEY)

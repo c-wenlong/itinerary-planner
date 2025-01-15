@@ -9,6 +9,9 @@ from .activity import (
     Duration_in_Hours_Field,
     Description_Field,
     Activity_Inferred_Fields,
+    Indoor_Or_Outdoor_Enum,
+    Location_Class,
+    Point,
 )
 
 __all__ = [
@@ -22,4 +25,7 @@ __all__ = [
     "Duration_in_Hours_Field",
     "Description_Field",
     "Activity_Inferred_Fields",
+    "Indoor_Or_Outdoor_Enum",
+    "Location_Class",
+    "Point",
 ]

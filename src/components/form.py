@@ -2,7 +2,7 @@ import streamlit as st
 from pydantic import ValidationError
 from datetime import datetime, timezone
 
-from schemas import Activity, Activity_Inferred_Fields, Category_Enum
+from entities import Activity, Activity_Inferred_Fields, Category_Enum
 from services import text_to_structured_output, upload_activity
 from .google_maps_search import show_google_maps_search
 
