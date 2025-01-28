@@ -4,6 +4,7 @@ from qdrant_client import QdrantClient, models
 from uuid import UUID
 
 from .OpenAIService import text_to_embedding
+from utils import setup_logger
 from entities import Activity
 
 QDRANT_URL = st.secrets["QDRANT"]["QDRANT_URL"]
@@ -18,12 +19,14 @@ class QdrantService:
             api_key=QDRANT_API_KEY,
         )
         self.collection_name = collection_name
-        self.logger = logger()
+        self.logger = setup_logger(__name__, "qdrant")
 
     #####################################
     ###############CREATE################
     #####################################
-    def upload_activity(self, activity: Activity) -> bool:
+    def upload_activity(
+        self, activity: Activity
+    ) -> bool:  # fails if point already exists
         event_embedding = text_to_embedding(activity)
         try:
             self.client.insert(
@@ -35,26 +38,6 @@ class QdrantService:
         except Exception as e:
             st.error(f"Failed to upload event: {e}")
             return False
-
-    def upsert_activity(self, activity_data: dict):
-        # Extract the UUID from the id field and convert to string
-        point_id = UUID(activity_data["id"].split("'")[1])
-
-        # Create the point
-        point = models.PointStruct(
-            id=point_id.int,  # Qdrant uses integers for IDs
-            payload=activity_data,
-            vector=[0.0] * 1,  # Placeholder vector if needed
-        )
-
-        # Upsert the point
-        self.client.upsert(
-            collection_name=self.collection_name,
-            points=[point],
-            wait=True,  # Ensure the operation is complete before returning
-        )
-
-        return point_id
 
     #####################################
     ################READ#################
@@ -85,10 +68,38 @@ class QdrantService:
             wait=True,
         )
 
+    def upsert_activity(
+        self, activity_data: dict
+    ):  # updates if point already exists, creates if not
+        # Extract the UUID from the id field and convert to string
+        point_id = UUID(activity_data["id"].split("'")[1])
+
+        # Create the point
+        point = models.PointStruct(
+            id=point_id.int,  # Qdrant uses integers for IDs
+            payload=activity_data,
+            vector=[0.0] * 1,  # Placeholder vector if needed
+        )
+
+        # Upsert the point
+        self.client.upsert(
+            collection_name=self.collection_name,
+            points=[point],
+            wait=True,  # Ensure the operation is complete before returning
+        )
+
+        return point_id
+
     #####################################
     ###############DELETE################
     #####################################
     def delete_point(self, id: int):
-        self.client.delete_vectors(
-            self.collection_name,
-        )
+        self.logger.info(f"Attempting to delete point with ID: {id}")
+        try:
+            self.client.delete_vectors(
+                self.collection_name,
+            )
+            self.logger.info(f"Successfully deleted point: {id}")
+        except Exception as e:
+            self.logger.error(f"Error deleting point {id}: {str(e)}", exc_info=True)
+            raise

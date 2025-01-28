@@ -1,12 +1,10 @@
 from .statistics import show_statistics
-from .form import show_activity_form, merge_inferred_fields
-from .table import show_activity_table
+from .Form import Form
+from .Table import Table
 from .google_maps_search import show_google_maps_search
 
 __all__ = [
-    "show_statistics",
-    "merge_inferred_fields",
-    "show_activity_form",
-    "show_activity_table",
+    "Form",
+    "Table",
     "show_google_maps_search",
 ]

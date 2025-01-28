@@ -1,10 +1,10 @@
 from typing import List
 from openai import OpenAI
 import streamlit as st
-import logging
 
 from .prompts import RECOMMENDER_SYSTEM, STRUTURED_OUTPUT_SYSTEM
 from entities import Activity_Inferred_Fields
+from utils import setup_logger
 
 OPENAI_API_KEY = st.secrets["OPENAI"]["OPENAI_API_KEY"]
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
@@ -20,7 +20,7 @@ class OpenAIService:
         self.structured_output = {
             "INFERRED_FIELDS": Activity_Inferred_Fields,
         }
-        self.logger = logging()
+        self.logger = setup_logger(__name__, "openai")
 
     def enhance_prompt(user_prompt: str) -> str:
         completion = openai_client.chat.completions.create(

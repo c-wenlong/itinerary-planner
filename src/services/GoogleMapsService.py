@@ -4,6 +4,8 @@ from shapely.geometry import Point
 from geopy.distance import geodesic
 from datetime import datetime
 
+from utils import setup_logger
+
 GOOGLE_MAPS_API_KEY = st.secrets["MAPS"]["GOOGLE_MAPS_API_KEY"]
 
 
@@ -12,6 +14,7 @@ class GoogleMapsService:
         self.client = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
         self.HOME = self.address_to_coordinates(home) if type(home) == "str" else home
         self.WORK = self.address_to_coordinates(work) if type(work) == "str" else work
+        self.logger = setup_logger(__name__, "googlemaps")
 
     def get_directions(self, origin, destination, mode="transit"):
         # Request directions via public transit
