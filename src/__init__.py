@@ -1,1 +1,1 @@
-from .services.qdrant_service import *  # Only if you want to expose everything
+from .services.QdrantService import *  # Only if you want to expose everything

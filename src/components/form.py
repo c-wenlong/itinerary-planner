@@ -6,21 +6,6 @@ from entities import Activity, Activity_Inferred_Fields, Category_Enum
 from services import text_to_structured_output, upload_activity
 from .google_maps_search import show_google_maps_search
 
-"""
-test_activity = Activity(
-    name="Test Activity",
-    category="Test Category",
-    Physical_Intensity_Field="High",
-    Cost_Range_Field="Low",
-    Social_Interaction_Field="High",
-    Location_Field="Test Location",
-    Time_Of_Day_Field="Morning",
-    Weather_Suitability_Field="Sunny",
-    Skills_List_Field=["Test Skill 1", "Test Skill 2"],
-    Tags_Field=["Test Tag 1", "Test Tag 2"],
-)
-"""
-
 
 def show_activity_form():
     # We're adding activities via an `st.form` and some input widgets. If widgets are used
@@ -30,10 +15,13 @@ def show_activity_form():
         with required:
             # Required Fields
             name = st.text_input("Name of the activity")
+
             description = st.text_area("Describe the activity!", height=80)
+
             category = st.selectbox(
                 "Category", [category.value for category in Category_Enum]
             )
+
             duration = st.number_input(
                 "Duration in hours (will be rounded to nearest 0.5)",
                 min_value=0.0,
@@ -43,12 +31,16 @@ def show_activity_form():
         with optional:
             # Optional Fields
             location = st.text_input("Location (optional)")
+
             date = st.date_input("Date (optional)", value=None)
+
             url = st.text_input("URL (optional)")
+
             skills_input = st.text_input(
                 "Skills (optional) - Separate multiple skills with commas",
                 placeholder="e.g., navigation, photography, teamwork",
             )
+
             tags_input = st.text_input(
                 "Tags (optional) - Separate multiple tags with commas",
                 placeholder="e.g., outdoor, nature, exercise",
@@ -72,10 +64,12 @@ def show_activity_form():
         # state.
         try:
             activity = Activity(
+                # REQUIRED
                 name=name,
                 category=category,
                 duration=duration,
                 description=description,
+                # OPTIONAL
                 location=location if location else None,
                 date=(
                     datetime.combine(date, datetime.min.time()).replace(
@@ -92,26 +86,30 @@ def show_activity_form():
             # Here you would typically save the activity
             st.success("Activity added successfully!")
 
-            # Display both activity and inferred fields as formatted JSON
-            col1, col2 = st.columns(2)
-
-            with col1:
-                st.subheader("Activity Data")
-                st.json(activity.model_dump())
-
-            with col2:
-                st.subheader("Inferred Fields")
-                inferred_fields = text_to_structured_output(activity.model_dump_json())
-                st.json(inferred_fields)
-
-            st.subheader("Merged Activity")
-            full_activity = merge_inferred_fields(activity, inferred_fields)
-            st.json(full_activity.model_dump())
-
-            # upload_activity(activity)
+            # REMOVE IN PROD
+            visualise_output_json(activity=activity)
+            # upload_activity(activity) ## uploads onto qdrant db
 
         except ValidationError as e:
             st.error(f"Validation error: {str(e)}")
+
+
+def visualise_output_json(activity: Activity):
+    # Display both activity and inferred fields as formatted JSON
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Activity Data")
+        st.json(activity.model_dump())
+
+    with col2:
+        st.subheader("Inferred Fields")
+        inferred_fields = text_to_structured_output(activity.model_dump_json())
+        st.json(inferred_fields)
+
+    st.subheader("Merged Activity")
+    full_activity = merge_inferred_fields(activity, inferred_fields)
+    st.json(full_activity.model_dump())
 
 
 def merge_inferred_fields(

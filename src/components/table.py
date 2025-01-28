@@ -26,11 +26,12 @@ def show_activity_table(activities: list[Activity]):
     # Convert activities to a format suitable for display
     activities_data = []
     for activity in activities:
+        """
         # Format location as a string if it exists
         location_str = ""
         if activity.location:
             location_str = f"{activity.location.full_address} ({activity.location.coordinates.lat}, {activity.location.coordinates.lon})"
-
+        """
         activities_data.append(
             {
                 # Hidden system fields (stored but not displayed)
@@ -42,7 +43,7 @@ def show_activity_table(activities: list[Activity]):
                 "Category": activity.category,
                 "Duration (hrs)": float(activity.duration),
                 "Description": activity.description,
-                "Location": location_str,
+                #"Location": location_str,
                 "Physical Intensity": activity.physical_intensity,
                 "Cost Range": activity.cost_range,
                 "Social Interaction": activity.social_interaction,
