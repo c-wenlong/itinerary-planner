@@ -9,3 +9,5 @@ __pycache__/
 .sandbox/
 
 src/services/initiatise_vector_db.py
+
+logs/

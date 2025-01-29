@@ -1,5 +1,5 @@
 import streamlit as st
-from services import fetch_recommended_events, user_to_vectordb_prompt
+from services import QdrantService, OpenAIService
 from ui import create_event_card, create_history_card
 
 st.set_page_config(
@@ -27,6 +27,8 @@ def initialise_session_state():
 
 
 def recommendation_engine():
+    qdrant = QdrantService()
+    openai = OpenAIService()
     # Create input field
     prompt = st.text_input(
         "Try using the prompt below! \n\n I wanna plan a date with someone called kai."
@@ -37,10 +39,10 @@ def recommendation_engine():
         if prompt:
             with st.spinner("Finding recommendations..."):
                 # transform user input to a prompt that is better for the vector DB
-                improved_prompt = user_to_vectordb_prompt(prompt)
+                improved_prompt = openai.enhance_prompt(prompt)
 
                 # fetch the recommendations from the vector DB
-                events = fetch_recommended_events(improved_prompt)
+                events = qdrant.search_vector(improved_prompt)
 
                 # Create cards for each recommendation
                 for event in events:

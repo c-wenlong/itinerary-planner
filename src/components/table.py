@@ -1,3 +1,4 @@
+from typing import List
 import streamlit as st
 
 from entities import (
@@ -14,13 +15,14 @@ from entities import (
 )
 
 
-def Table():
-    def init(self):
-        pass
+class Table:
+    def __init__(self, activities: List[Activity]):
+        self.schema = Activity
+        self.activities = activities
 
-    def show_activity_table(activities: list[Activity]):
+    def render_table(self) -> List[Activity]:
         st.header("Existing Activities")
-        st.write(f"Number of activities: `{len(activities)}`")
+        st.write(f"Number of activities: `{len(self.activities)}`")
         st.info(
             "You can edit the activities by double clicking on a cell. Note how the plots below "
             "update automatically! You can also sort the table by clicking on the column headers.",
@@ -29,7 +31,7 @@ def Table():
 
         # Convert activities to a format suitable for display
         activities_data = []
-        for activity in activities:
+        for activity in self.activities:
             """
             # Format location as a string if it exists
             location_str = ""
@@ -154,4 +156,5 @@ def Table():
             column_order=list(column_config.keys()),  # Only show configured columns
         )
 
+        self.activities = edited_data
         return edited_data

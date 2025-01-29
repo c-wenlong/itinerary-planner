@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime
+import os
+from pathlib import Path
 
 
 def setup_logger(name: str, log_file_prefix: str = None) -> logging.Logger:
@@ -21,9 +23,13 @@ def setup_logger(name: str, log_file_prefix: str = None) -> logging.Logger:
 
         # File handler (optional)
         if log_file_prefix:
-            file_handler = logging.FileHandler(
-                f'logs/{log_file_prefix}_{datetime.now().strftime("%Y%m%d")}.log'
+            # Create logs directory if it doesn't exist
+            log_dir = Path("logs")
+            log_dir.mkdir(exist_ok=True)
+            log_file_path = (
+                log_dir / f'{log_file_prefix}_{datetime.now().strftime("%Y%m%d")}.log'
             )
+            file_handler = logging.FileHandler(log_file_path)
             file_handler.setFormatter(log_format)
             logger.addHandler(file_handler)
 

@@ -30,18 +30,6 @@ class GoogleMapsService:
         )
         return addressvalidation_result
 
-    # Usage in your Streamlit app
-    def main():
-        st.title("Location Search")
-
-        selected_place = google_place_search()
-
-        if selected_place:
-            st.write("Selected Location:")
-            st.write(f"Name: {selected_place['name']}")
-            st.write(f"Address: {selected_place['formatted_address']}")
-            st.write(f"Coordinates: ({selected_place['lat']}, {selected_place['lng']})")
-
     def address_to_coordinates(self, address: str) -> Point:
         geocode_result = self.client.geocode(address)
         x = geocode_result[0]["geometry"]["location"]["lat"]

@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 
 from entities import Activity, Activity_Inferred_Fields, Category_Enum
 from services import OpenAIService, QdrantService
-from .google_maps_search import show_google_maps_search
 
 
 class Form:
@@ -12,7 +11,7 @@ class Form:
         self.qdrant = QdrantService()
         self.openai = OpenAIService()
 
-    def render_from(self):
+    def render_form(self):
         # We're adding activities via an `st.form` and some input widgets. If widgets are used
         # in a form, the app will only rerun once the submit button is pressed.
         with st.form("add_activity_form"):

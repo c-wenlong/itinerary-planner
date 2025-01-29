@@ -1,6 +1,6 @@
 import streamlit as st
 
-from components import show_statistics, show_activity_form, show_activity_table
+from components import Form
 
 # Show app title and description.
 st.set_page_config(
@@ -18,4 +18,5 @@ st.write(
     """
 )
 
-show_activity_form()
+form = Form()
+form.render_form()

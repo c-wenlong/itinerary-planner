@@ -1,7 +1,7 @@
 import streamlit as st
 
-from services import fetch_all_events
-from components import show_activity_table
+from services import QdrantService
+from components import Table
 from entities import Activity
 from utils import load_sample_activities
 
@@ -15,4 +15,5 @@ st.set_page_config(
 if "activities" not in st.session_state:
     st.session_state.activities = load_sample_activities()
 
-activities: list[Activity] = show_activity_table(st.session_state.activities)
+table = Table(st.session_state.activities)
+table.render_table()

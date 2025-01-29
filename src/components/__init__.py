@@ -1,4 +1,3 @@
-from .statistics import show_statistics
 from .Form import Form
 from .Table import Table
 from .google_maps_search import show_google_maps_search
